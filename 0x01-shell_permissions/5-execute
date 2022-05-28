@@ -1,2 +1,2 @@
 #!/bin/bash
-chmod -wx hello
+chmod 0744 hello
