@@ -1,2 +1,2 @@
 #!/bin/bash
-chmod ugo=rwx hello
+chmod 0756 hello
