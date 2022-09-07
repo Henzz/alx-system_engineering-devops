@@ -1,0 +1,2 @@
+#!/bin/bash
+echo $(cut -d " " -f1 An_Acrostic | head -n 1 | tr [:lower:] [:upper:])
