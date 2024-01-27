@@ -4,13 +4,16 @@
 # Find the PID of the process
 pid=$(pgrep -f "4-to_infinity_and_beyond")
 
-# Check if the process is running
-if [[ -z $pid ]]; then
+# Check if the process if running
+if [[ -z "$pid" ]]; then
 	echo "Process not found"
 	exit 1
 fi
 
-# Terminate the process
-kill "$pid"
+# Terminate the process by sending a SIGTERM signal
+if ! /bin/kill -s SIGTERM "$pid"; then
+	echo "Failed to stop the process"
+	exit 1
+fi
 
 exit 0
