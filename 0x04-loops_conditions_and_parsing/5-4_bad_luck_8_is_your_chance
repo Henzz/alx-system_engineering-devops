@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# This script displays "Best School" 10 times using a while loop
+# This script displays "bad luck" on the 4th loop, "good luck" on the 8th loop else "Best School" using a while loop
 
 count=0
 while [ $count -lt 10 ]
