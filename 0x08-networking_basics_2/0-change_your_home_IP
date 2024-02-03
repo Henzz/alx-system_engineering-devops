@@ -1,16 +1,16 @@
 #!/usr/bin/env bash
-# This script configures the localhost and facebook.com DNS resolution
+# This script configures an Ubuntu server with custom DNS resolutions for localhost and facebook.com
+# It takes into account Docker's behavior of overwriting /etc/hosts and uses a workaround
 
-# Update the hosts file
-sudo sed -i 's/^127\.0\.0\.1[[:space:]]\+localhost$/127.0.0.2 localhost/' /etc/hosts
-sudo sed -i 's/^8\.8\.8\.8[[:space:]]\+facebook\.com$/157.240.11.35 facebook.com/' /etc/hosts
+# Create a backup of the hosts file
+cp /etc/hosts ~/hosts.new
 
-# Restart the networking service to apply the changes
-sudo systemctl restart networking.service
+# Update the backup file with the desired DNS resolutions
+sed -i 's/^127\.0\.0\.1[[:space:]]\+localhost$/127.0.0.2 localhost/' ~/hosts.new
+sed -i 's/^8\.8\.8\.8[[:space:]]\+facebook\.com$/157.240.11.35 facebook.com/' ~/hosts.new
 
-# Check the updated DNS resolution
-echo "Checking localhost resolution..."
-ping localhost
+# Overwrite the original hosts file with the modified backup file
+sudo cp -f ~/hosts.new /etc/hosts
 
-echo "Checking facebook.com resolution..."
-ping facebook.com
+# Remove the backup file
+rm ~/hosts.new
