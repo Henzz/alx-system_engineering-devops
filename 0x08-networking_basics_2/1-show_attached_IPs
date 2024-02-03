@@ -1,12 +1,19 @@
 #!/usr/bin/env bash
-# Script: 1-show_attached_IPs
-# Description: Displays all active IPv4 IPs on the machine.
+# This script displays all active IPv4 IPs on the machine
 
 # Get the list of network interfaces
-interfaces=$(ip -4 -o addr show | awk '{print $2}')
+interfaces=$(ip -o -4 addr show | awk '{print $2}')
 
-# Iterate through each interface and extract the IP address
+# Iterate over each interface and extract the IPv4 addresses
 for interface in $interfaces; do
-    ip_address=$(ip -4 -o addr show $interface | awk '{print $4}')
-    echo $ip_address
+  # Skip loopback interface
+  if [[ $interface == lo* ]]; then
+    continue
+  fi
+  
+  # Extract the IPv4 address
+  ip=$(ip -4 addr show $interface | awk '/inet / {print $2}')
+  
+  # Print the IPv4 address
+  echo $ip
 done
