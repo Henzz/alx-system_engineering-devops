@@ -8,7 +8,7 @@ file { '~/.ssh/school':
         HostName 54.227.128.255
         User ubuntu
         IdentityFile ~/.ssh/school
-        PreferredAuthentications publickey
+        PreferredAuthentication publickey
         PasswordAuthentication no
   ",
 }
