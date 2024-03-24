@@ -1,7 +1,7 @@
-file { '':
+file { '~/.ssh/school':
   ensure => file,
   owner => 'ubuntu',
-  group => '',
+  group => 'root',
   mode => '0600',
   content => "
     Host 54.227.128.255
