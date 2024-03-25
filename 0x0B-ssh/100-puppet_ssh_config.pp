@@ -1,5 +1,5 @@
 # Client SSH configuration file to connect to a server without typing a password with puppet file
-file { '~/.ssh/school':
+file { '/etc/ssh/ssh_config':
   ensure => file,
   owner => 'ubuntu',
   group => 'root',
