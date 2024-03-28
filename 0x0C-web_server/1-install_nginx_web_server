@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# Installs nginx on a server and write content to '/var/www/html/index.html' file then restarts the server
 
 # Update the package lists
 sudo apt-get update
