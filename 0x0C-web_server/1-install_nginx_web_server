@@ -1,14 +1,30 @@
 #!/usr/bin/env bash
 # Installs nginx on a server and write content to '/var/www/html/index.html' file then restarts the server
 
-# Update the package lists
-sudo apt-get update
+# Update package lists
+sudo apt update
 
 # Install Nginx
-sudo apt-get install -y nginx
+sudo apt install nginx -y
 
-# Create index.html file
-sudo echo "Hello world!" > /var/www/html/index.html
+# Configure Nginx to listen on port 80
+sudo sed -i 's/listen 80 default_server;/listen 80;/g' /etc/nginx/sites-available/default
 
 # Restart Nginx
 sudo service nginx restart
+
+# Create a temporary HTML file
+sudo bash -c 'echo "<html><body>Hello World!</body></html>" > /var/www/html/index.html'
+
+# Make sure the HTML file is owned by www-data
+sudo chown www-data:www-data /var/www/html/index.html
+
+# Test the configuration by querying Nginx
+response=$(curl -s http://localhost)
+
+# Check if the response contains "Hello World!"
+if [[ $response == *"Hello World!"* ]]; then
+    echo "Nginx is configured correctly."
+else
+    echo "Nginx configuration failed. Please check the installation and configuration."
+fi
