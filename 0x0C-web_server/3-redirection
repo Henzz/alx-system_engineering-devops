@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+# Configuration for Nginx server so that /redirect_me is redirecting to another page.
+
+# Update package lists
+sudo apt update
+
+# Install Nginx
+sudo apt install nginx -y
+
+# Configure Nginx to listen on port 80
+sudo sed -i 's/listen 80 default_server;/listen 80;/g' /etc/nginx/sites-available/default
+
+# Create a temporary HTML file for the redirection
+sudo bash -c 'echo "server {
+    listen 80;
+    server_name _;
+    location /redirect_me {
+        return 301 http://example.com/redirected_page;
+    }
+}" > /etc/nginx/sites-available/redirect'
+
+# Enable the redirection site
+sudo ln -s /etc/nginx/sites-available/redirect /etc/nginx/sites-enabled/
+
+# Remove the default Nginx configuration
+sudo rm /etc/nginx/sites-enabled/default
+
+# Restart Nginx
+sudo service nginx restart
+
+# Test the redirection by querying Nginx
+response=$(curl -s -I http://localhost/redirect_me)
+
+# Check if the response contains "301 Moved Permanently"
+if [[ $response == *"301 Moved Permanently"* ]]; then
+    echo "Nginx redirection is configured correctly."
+else
+    echo "Nginx redirection configuration failed. Please check the installation and configuration."
+fi
