@@ -39,6 +39,9 @@ backend servers
     server web-02 [STUDENT_ID]-web-02:80 check
 EOL
 
+# Enable HAProxy service
+sudo sed -i 's/ENABLED=0/ENABLED=1/' /etc/default/haproxy
+
 # Enable and start HAProxy service
 sudo systemctl enable haproxy
 sudo systemctl start haproxy
