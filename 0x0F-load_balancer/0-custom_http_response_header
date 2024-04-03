@@ -9,7 +9,20 @@ sudo apt upgrade -y
 sudo apt install -y nginx
 
 # Configure the custom HTTP response header
-sudo sed -i '/http {/a \        server_tokens off;\n        add_header X-Served-By $hostname;' /etc/nginx/nginx.conf
+sudo tee /etc/nginx/sites-available/default > /dev/null << EOL
+server {
+    listen 80 default_server;
+    listen [::]:80 default_server;
+
+    server_name _;
+
+    location / {
+        add_header X-Served-By \$hostname;
+        root /var/www/html;
+        index index.html;
+    }
+}
+EOL
 
 # Restart Nginx
 sudo systemctl restart nginx
