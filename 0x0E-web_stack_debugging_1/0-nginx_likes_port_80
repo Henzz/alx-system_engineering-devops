@@ -1,29 +1,28 @@
 #!/usr/bin/env bash
-#
-# Script: configure_nginx_port_80.sh
-# Description: Configures Nginx to listen on port 80 for all active IPv4 IPs
+# Install nginx and starts nginx server. If there is a port running on 80 it disables Install
 
-# Check if Nginx is already listening on port 80
-if curl -s -m 2 0:80 >/dev/null; then
-  echo "Nginx is already listening on port 80"
-  exit 0
+# Install nginx
+sudo apt update
+sudo apt install -y nginx
+
+# Check if port 80 is in use
+port_in_use=$(lsof -i :80)
+
+if [[ -n "$port_in_use" ]]; then
+    # Get the process IDs using port 80
+    pids=$(lsof -t -i :80)
+
+    # Stop the processes
+    for pid in $pids; do
+      sudo kill "$pid"
+    done
+else
+  echo "Port 80 is free."
 fi
 
-# Install Nginx if it's not already installed
-if ! command -v nginx >/dev/null; then
-  sudo apt update
-  sudo apt install -y nginx
-fi
-
-# Configure Nginx to listen on port 80
+# Update Nginx configuration
 sed -i 's/#listen 80;/listen 80;/' /etc/nginx/nginx.conf
 
 # Restart Nginx service
-systemctl restart nginx
+sudo service nginx start
 
-# Check if Nginx is now listening on port 80
-if curl -s -m 2 0:80 >/dev/null; then
-  echo "Nginx is now listening on port 80"
-else
-  echo "Failed to configure Nginx to listen on port 80"
-fi
