@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+# Install nginx and starts nginx server. If there is a port running on 80 it disables Install
+
+# Install nginx
+sudo apt update
+sudo apt install -y nginx
+
+# Check if port 80 is in use
+port_in_use=$(lsof -i :80)
+
+if [[ -n "$port_in_use" ]]; then
+    # Get the process IDs using port 80
+    pids=$(lsof -t -i :80)
+
+    # Stop the processes
+    for pid in $pids; do
+      sudo kill "$pid"
+    done
+else
+  echo "Port 80 is free."
+fi
+
+# Update Nginx configuration
+sed -i 's/#listen 80;/listen 80;/' /etc/nginx/nginx.conf
+
+# Restart Nginx service
+sudo service nginx start
