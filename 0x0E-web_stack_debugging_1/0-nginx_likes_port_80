@@ -25,3 +25,4 @@ sed -i 's/#listen 80;/listen 80;/' /etc/nginx/nginx.conf
 
 # Restart Nginx service
 sudo service nginx start
+
