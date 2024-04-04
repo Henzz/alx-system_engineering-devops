@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+# Install nginx and starts nginx server. If there is a port running on 80 it disables Install
+if ! curl -s -m 2 0:80 >/dev/null; then
+  sudo sed -i 's/#listen 80;/listen 80;/' /etc/nginx/nginx.conf
+  sudo systemctl restart nginx
+fi
