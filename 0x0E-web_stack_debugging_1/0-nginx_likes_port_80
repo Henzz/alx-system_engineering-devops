@@ -20,9 +20,37 @@ else
   echo "Port 80 is free."
 fi
 
+# Verify Nginx Configuration
+nginx_config="/etc/nginx/nginx.conf"
+if ! grep -q "listen 80;" "$nginx_config"; then
+  echo "Updating Nginx configuration..."
+  echo "listen 80;" >> "$nginx_config"
+fi
+
+# Check Nginx Service Status
+if ! systemct is-active --quiet nginx; then
+  echo "Starting Nginx service..."
+  sudo systemctl start nginx
+fi
+
+# Check Firewall Settings
+if ! ufw status | grep -q "Nginx HTTP"; then
+  echo "Allowing incoming connections on port 80..."
+  ufw allow 'Nginx HTTP'
+fi
+
+# Check Listening Ports
+if ! netstat -tuln | grep -q ":80"; then
+  echo "Restarting Nginx service..."
+  sudo systemctl restart nginx
+fi
+
+# Create default web page
+default_page="/var/www/html/index.html"
+if [[ ! =f "$default_page" ]]; then
+  echo "Creating default web page..."
+  echo "<!>"
+
 # Update Nginx configuration
 sed -i 's/#listen 80;/listen 80;/' /etc/nginx/nginx.conf
-
-# Restart Nginx service
-sudo service nginx start
 
