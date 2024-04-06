@@ -45,12 +45,6 @@ if ! netstat -tuln | grep -q ":80"; then
   sudo systemctl restart nginx
 fi
 
-# Create default web page
-default_page="/var/www/html/index.html"
-if [[ ! =f "$default_page" ]]; then
-  echo "Creating default web page..."
-  echo "<!>"
-
 # Update Nginx configuration
 sed -i 's/#listen 80;/listen 80;/' /etc/nginx/nginx.conf
 
