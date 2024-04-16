@@ -4,6 +4,9 @@
 sudo apt-get update
 sudo apt-get install ufw -y
 
+# Check the status and rules of UFW
+sudo ufw status verbose
+
 # Set default incoming policy to deny
 ufw default deny incoming
 
