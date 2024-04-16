@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+# Runs Nginx as the nginx user
+if ! command -v nginx &> /dev/null; then
+  sudo apt-get update
+  sudo apt-get install -y nginx
+  echo "Please provide a username as an argument"
+  exit 1
+fi
+
+# Stop Nginx service
+sudo service nginx stop
+
+# Modify Nginx configuration
+sed -i 's/^user .*/user nginx;/g' /etc/nginx/nginx.conf
+sed -i 's/^listen .*/listen 8080;/g' /etc/nginx/sites-available/default
+
+# Start Nginx service
+sudo service nginx start
