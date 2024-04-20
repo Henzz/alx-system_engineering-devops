@@ -5,19 +5,19 @@ sudo service nginx stop
 
 # Create a new user named "nginx" if not exists
 if ! id -u nginx >/dev/null 2>&1; then
-  useradd -r -s /usr/sbin/nologin nginx
+  sudo useradd -r nginx
+  sudo groupadd nginx
 fi
 
 # Update Nginx configuration to run as "nginx" user
 sed -i 's/user\s*www-data;/user nginx;/' /etc/nginx/nginx.conf
 
 # Update Nginx default site configuration to listen on port 8080 and all IPs
-sed -i 's/listen\s*80;/listen 8080;/' /etc/nginx/sites-available/default
-sed -i 's/listen\s*\[::\]:80;/listen [::]:8080;/' /etc/nginx/sites-available/default
+sed -i 's/listen\s*80;/listen 8080 default_server;/' /etc/nginx/sites-available/default
+sed -i 's/listen\s*\[::\]:80;/listen [::]:8080 default_server;/' /etc/nginx/sites-available/default
 
 # Change ownership of Nginx files to the "nginx" user
-sudo chown -R nginx:nginx /var/log/nginx
-sudo chown -R nginx:nginx /var/lib/nginx
+sudo chown -R nginx:nginx /etc/nginx /var/www/html /var/log/nginx /var/lib/nginx
 
 # Start Nginx service with the new configuration
 sudo service nginx start
