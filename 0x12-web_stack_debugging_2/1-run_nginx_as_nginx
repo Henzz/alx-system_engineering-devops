@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-
+# Runs your nginx web servers as nginx user
 # 1. Create the 'nginx' user and group (if not already present)
 if ! id -u nginx &> /dev/null; then
   echo "Creating 'nginx' user and group..."
