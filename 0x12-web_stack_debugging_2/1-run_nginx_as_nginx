@@ -23,12 +23,19 @@ done
 
 # 3. Modify Nginx configuration
 nginx_conf="/etc/nginx/nginx.conf"
+nginx_siteconf="/etc/nginx/sites-available/default"
 
 if [[ -f "$nginx_conf" ]]; then
   echo "Modifying Nginx configuration..."
   sudo sed -i 's/user.*/user nginx;/' "$nginx_conf"  # Replace 'user root;' with 'user nginx;'
   sudo sed -i 's/listen .*/listen 8080;/' "$nginx_conf"  # Replace existing 'listen' with 'listen 8080;'
-  sudo sed -i 's/server_name .*/server_name _;/' "$nginx_conf"  # Replace existing 'server_name' with 'server_name _;'
+fi
+
+if [[ -f "$nginx_siteconf" ]]; then
+  echo "Modifying Nginx sites file"
+  sudo sed -i 's/listen .*;/listen 8080 default_server;/' "$nginx_siteconf"  # Replace existing 'listen ' with 'listen 8080 default_server;'
+  sudo sed -i 's/listen .*\[::\]:80;/listen [::]:8080 default_server;/' "$nginx_siteconf"  # Replace existing 'listen [::]:80' with 'listen [::]:8080'
+  sudo sed -i 's/server_name .*;/server_name _;/' "$nginx_siteconf"  # Replace existing 'server_name' with 'server_name _;'
 
   # Test configuration syntax
   if ! nginx -t; then
