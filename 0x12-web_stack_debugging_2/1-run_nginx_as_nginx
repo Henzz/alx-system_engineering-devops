@@ -1,23 +1,45 @@
 #!/usr/bin/env bash
-# Runs your nginx web servers as nginx user
-# Stop the currently running Nginx service
-sudo service nginx stop
 
-# Create a new user named "nginx" if not exists
-if ! id -u nginx >/dev/null 2>&1; then
-  sudo useradd -r nginx
-  sudo groupadd nginx
+# 1. Create the 'nginx' user and group (if not already present)
+if ! id -u nginx &> /dev/null; then
+  echo "Creating 'nginx' user and group..."
+  sudo groupadd -r nginx
+  sudo useradd -r -g nginx nginx
 fi
 
-# Update Nginx configuration to run as "nginx" user
-sed -i 's/user\s*www-data;/user nginx;/' /etc/nginx/nginx.conf
+# 2. Adjust file permissions
+directories=(
+  "/etc/nginx"
+  "/var/www/html"  # Replace with your actual web root directory
+  "/var/log/nginx"
+)
 
-# Update Nginx default site configuration to listen on port 8080 and all IPs
-sed -i 's/listen\s*80;/listen 8080 default_server;/' /etc/nginx/sites-available/default
-sed -i 's/listen\s*\[::\]:80;/listen [::]:8080 default_server;/' /etc/nginx/sites-available/default
+for dir in "${directories[@]}"; do
+  if [[ -d "$dir" ]]; then
+    echo "Changing ownership of directory: $dir"
+    sudo chown -R nginx:nginx "$dir"
+  fi
+done
 
-# Change ownership of Nginx files to the "nginx" user
-sudo chown -R nginx:nginx /etc/nginx /var/www/html /var/log/nginx /var/lib/nginx
+# 3. Modify Nginx configuration
+nginx_conf="/etc/nginx/nginx.conf"
 
-# Start Nginx service with the new configuration
-sudo service nginx start
+if [[ -f "$nginx_conf" ]]; then
+  echo "Modifying Nginx configuration..."
+  sudo sed -i 's/user.*/user nginx;/' "$nginx_conf"  # Replace 'user root;' with 'user nginx;'
+  sudo sed -i 's/listen .*/listen 8080;/' "$nginx_conf"  # Replace existing 'listen' with 'listen 8080;'
+  sudo sed -i 's/server_name .*/server_name _;/' "$nginx_conf"  # Replace existing 'server_name' with 'server_name _;'
+
+  # Test configuration syntax
+  sudo nginx -t
+  if [[ $? -ne 0 ]]; then
+    echo "Error: Nginx configuration syntax error. Please review changes manually."
+    exit 1
+  fi
+fi
+
+# 4. Restart Nginx
+echo "Restarting Nginx..."
+sudo service nginx restart
+
+echo "Nginx configuration complete!"
