@@ -31,8 +31,7 @@ if [[ -f "$nginx_conf" ]]; then
   sudo sed -i 's/server_name .*/server_name _;/' "$nginx_conf"  # Replace existing 'server_name' with 'server_name _;'
 
   # Test configuration syntax
-  sudo nginx -t
-  if [[ $? -ne 0 ]]; then
+  if ! nginx -t; then
     echo "Error: Nginx configuration syntax error. Please review changes manually."
     exit 1
   fi
@@ -40,6 +39,6 @@ fi
 
 # 4. Restart Nginx
 echo "Restarting Nginx..."
-sudo service nginx restart
+sudo service nginx
 
 echo "Nginx configuration complete!"
