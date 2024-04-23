@@ -1,4 +1,7 @@
 #!/usr/bin/python3
+"""
+A script that shows an employee name with their completed tasks.
+"""
 import sys
 import json
 import urllib.request as request
