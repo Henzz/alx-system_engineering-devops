@@ -5,6 +5,10 @@ import urllib.request as request
 
 
 def getData(url, user_id):
+    """
+    Fetches user name of an employee with id and his/her
+    completed tasks.
+    """
     name = ''
     tasks = 0
     tasks_done = 0
