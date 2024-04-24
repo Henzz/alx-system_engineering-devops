@@ -3,8 +3,8 @@
 A script that exports data in the JSON format.
 """
 import json
-import sys
 import requests
+import sys
 
 
 def export_to_json(user_id):
