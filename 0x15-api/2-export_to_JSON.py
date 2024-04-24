@@ -27,7 +27,11 @@ def export_to_json(user_id):
             data = response.json()
             for info in data:
                 if info.get('userId') == user_id:
-                    user_data[user_id].append(info)
+                    user_data[user_id].append({
+                        "task": info.get('title'),
+                        "completed": info.get('completed'),
+                        "username": user.get('username')
+                        })
             file.write(json.dumps(user_data))
 
 
