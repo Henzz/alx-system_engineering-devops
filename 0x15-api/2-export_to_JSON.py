@@ -2,29 +2,29 @@
 """
 A script that exports data in the JSON format.
 """
-import csv
 import json
 import sys
-import urllib.request as request
+import requests
 
 
-def getData(url, user_id):
+def export_to_json(user_id):
     """
     Fetches user name of an employee with id and his/her
     completed tasks.
     """
-    name = ''
+    base_url = "https://jsonplaceholder.typicode.com"
+    todos_url = f"{base_url}/todos"
+    user_url = f"{base_url}/users/{user_id}"
+    user = {}
     user_id = int(user_id)
-    user_url = f"https://jsonplaceholder.typicode.com/users/{user_id}"
-    with request.urlopen(user_url) as response:
-        data = json.loads(response.read().decode('utf-8'))
-        if data:
-            name = data.get('name')
+    with requests.get(user_url) as response:
+        data = response.json()
+        user = data
 
-    with open(f"{user_id}.json", 'w', newline='') as file:
+    with open(f"{user_id}.json", 'w', newline='', encoding='utf-8') as file:
         user_data = {user_id: []}
-        with request.urlopen(url) as response:
-            data = json.loads(response.read().decode('utf-8'))
+        with requests.get(todos_url) as response:
+            data = response.json()
             for info in data:
                 if info.get('userId') == user_id:
                     user_data[user_id].append(info)
@@ -36,6 +36,5 @@ if __name__ == "__main__":
         print('Please provide an employee ID as param.')
         sys.exit(1)
 
-    url = 'https://jsonplaceholder.typicode.com/todos'
     employee_id = sys.argv[1]
-    getData(url, employee_id)
+    export_to_json(employee_id)
