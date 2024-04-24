@@ -7,33 +7,34 @@ import sys
 import urllib.request as request
 
 
-def getData(url, user_id):
+def get_employee_todo(user_id):
     """
     Fetches user name of an employee with id and his/her
     completed tasks.
     """
-    name = ''
+    base_url = "https://jsonplaceholder.typicode.com"
+    todos_url = f"{base_url}/todos"
+    user_url = f"{base_url}/users/{user_id}"
+    user = {}
     tasks = 0
     tasks_done = 0
-    completed_tasks = []
+    completed_task_titles = []
     user_id = int(user_id)
-    user_url = f"https://jsonplaceholder.typicode.com/users/{user_id}"
     with request.urlopen(user_url) as response:
         data = json.loads(response.read().decode('utf-8'))
-        if data:
-            name = data.get('name')
+        user = data
 
-    with request.urlopen(url) as response:
+    with request.urlopen(todos_url) as response:
         data = json.loads(response.read().decode('utf-8'))
         for info in data:
             if info.get('userId') == user_id:
                 if info.get('completed'):
                     tasks_done += 1
-                    completed_tasks.append(info.get('title'))
+                    completed_task_titles.append(info.get('title'))
                 tasks += 1
-    print('Employee {} is done with tasks({}/{}):'
-          .format(name, tasks_done, tasks))
-    for task in completed_tasks:
+    print("Employee {} is done with tasks({}/{}):"
+          .format(user.get('name'), tasks_done, tasks))
+    for task in completed_task_titles:
         print("\t", task)
 
 
@@ -42,6 +43,5 @@ if __name__ == "__main__":
         print('Please provide an employee ID as param.')
         sys.exit(1)
 
-    url = 'https://jsonplaceholder.typicode.com/todos'
     employee_id = sys.argv[1]
-    getData(url, employee_id)
+    get_employee_todo(employee_id)
