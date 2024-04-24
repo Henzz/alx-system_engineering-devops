@@ -34,7 +34,7 @@ def getData(url, user_id):
     print('Employee {} is done with tasks({}/{}):'
           .format(name, tasks_done, tasks))
     for task in completed_tasks:
-        print("\t ", task)
+        print("\t", task)
 
 
 if __name__ == "__main__":
