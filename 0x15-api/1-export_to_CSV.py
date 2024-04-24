@@ -4,8 +4,8 @@ A script that exports data in the CSV format.
 """
 import csv
 import json
-import sys
 import requests
+import sys
 
 
 def export_to_csv(user_id):
