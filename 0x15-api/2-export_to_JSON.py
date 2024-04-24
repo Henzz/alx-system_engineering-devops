@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """
-A script that exports data in the CSV format.
+A script that exports data in the JSON format.
 """
 import csv
 import json
@@ -21,18 +21,14 @@ def getData(url, user_id):
         if data:
             name = data.get('name')
 
-    with open(f"{user_id}.csv", 'w', newline='') as file:
-        writer = csv.writer(file)
+    with open(f"{user_id}.json", 'w', newline='') as file:
+        user_data = {user_id: []}
         with request.urlopen(url) as response:
             data = json.loads(response.read().decode('utf-8'))
             for info in data:
                 if info.get('userId') == user_id:
-                    writer.writerow([
-                        str(user_id),
-                        name,
-                        info.get('completed'),
-                        info.get('title')
-                        ])
+                    user_data[user_id].append(info)
+            file.write(json.dumps(user_data))
 
 
 if __name__ == "__main__":
