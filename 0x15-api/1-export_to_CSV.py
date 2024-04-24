@@ -8,28 +8,29 @@ import sys
 import urllib.request as request
 
 
-def getData(url, user_id):
+def export_to_csv(user_id):
     """
     Fetches user name of an employee with id and his/her
     completed tasks.
     """
-    name = ''
+    base_url = "https://jsonplaceholder.typicode.com"
+    todos_url = f"{base_url}/todos"
+    user_url = f"{base_url}/users/{user_id}"
+    user = {}
     user_id = int(user_id)
-    user_url = f"https://jsonplaceholder.typicode.com/users/{user_id}"
     with request.urlopen(user_url) as response:
         data = json.loads(response.read().decode('utf-8'))
-        if data:
-            name = data.get('name')
+        user = data
 
     with open(f"{user_id}.csv", 'w', newline='') as file:
         writer = csv.writer(file)
-        with request.urlopen(url) as response:
+        with request.urlopen(todos_url) as response:
             data = json.loads(response.read().decode('utf-8'))
             for info in data:
                 if info.get('userId') == user_id:
                     writer.writerow([
                         str(user_id),
-                        name,
+                        user.get('username'),
                         info.get('completed'),
                         info.get('title')
                         ])
@@ -40,6 +41,5 @@ if __name__ == "__main__":
         print('Please provide an employee ID as param.')
         sys.exit(1)
 
-    url = 'https://jsonplaceholder.typicode.com/todos'
     employee_id = sys.argv[1]
-    getData(url, employee_id)
+    export_to_csv(employee_id)
