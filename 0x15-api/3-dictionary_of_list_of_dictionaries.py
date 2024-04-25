@@ -14,23 +14,31 @@ def export_to_json():
     """
     base_url = "https://jsonplaceholder.typicode.com"
     todos_url = f"{base_url}/todos"
-    user = {}
-    datas = []
-    with open(f"todo_all_employees.json", 'w', newline='', encoding='utf-8') as file:
+    users_url = f"{base_url}/users"
+    users = {}
+    todos = []
+    user_data = {}
+    with open("todo_all_employees.json",
+              'w',
+              newline='',
+              encoding='utf-8') as file:
         with requests.get(todos_url) as response:
-            datas = response.json()
+            todos = response.json()
 
-        for info in datas:
-            user_data = {info.get('userId'): []}
-            user_url = f"{base_url}/users/{info.get('userId')}"
-            with requests.get(user_url) as res:
-                data2 = res.json()
-                user = data2
-                user_data[info.get('userId')].append({
-                    "username": user.get('username'),
-                    "task": info.get('title'),
-                    "completed": info.get('completed'),
-                })
+        with requests.get(users_url) as response:
+            users = response.json()
+
+        for todo in todos:
+            user_data[todo.get('userId')] = []
+
+        for todo in todos:
+            for user in users:
+                if (user.get('id') == todo.get('userId')):
+                    user_data[todo.get('userId')].append({
+                        "username": user.get('username'),
+                        "task": todo.get('title'),
+                        "completed": todo.get('completed')
+                        })
         file.write(json.dumps(user_data))
 
 
