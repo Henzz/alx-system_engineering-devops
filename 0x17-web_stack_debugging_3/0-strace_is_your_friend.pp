@@ -1,6 +1,7 @@
-# Wordpress website running on a LAMP stack error 500 fix
+# Workpress website 500 error fix
+# This Puppet manifest renames occurrences of 'phpp' to 'php' in the file 'wp-settings.php'
 
-file { '/www/html/wp-settings.php':
-  ensure => file,
-  content => replace(file('/www/html/wp-settings.php'), 'phpp', 'php'),
+file { '/var/www/html/wp-settings.php':
+  ensure  => file,
+  content => inline_template('<%= File.read("/var/www/html/wp-settings.php").gsub("phpp", "php") %>'),
 }
