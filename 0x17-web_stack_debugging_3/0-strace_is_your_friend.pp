@@ -1,10 +1,6 @@
-# Assuming the missing file is /var/www/html/config.php
+# Wordpress website running on a LAMP stack error 500 fix
 
-file { '/var/www/html/config.php':
-  ensure => present,
-  owner  => 'apache',
-  group  => 'apache',
-  mode   => '0644',
-  source => '/path/to/config.php',
+file { '/www/html/wp-settings.php':
+  ensure => file,
+  content => replace(file('/www/html/wp-settings.php'), 'phpp', 'php'),
 }
-
