@@ -7,16 +7,10 @@ exec { 'add_ulimit_to_nginx':
   path    => ['/bin', '/usr/bin'],
 }
 
-# Ensure file
-file { '/etc/default/nginx':
-  ensure  => file,
-}
-
-# Ensure the Nginx service is running and enabled
-service { 'nginx':
-  ensure     => running,
-  enable     => true,
-  hasrestart => true,
-  require    => File['/etc/default/nginx'],
+# Restart nginx service
+exec { 'nginx_restart':
+  command     => 'sudo service nginx restart',
+  refreshonly => true,
+  path        => '/usr/bin:/usr/sbin:/bin:/sbin',
 }
 
