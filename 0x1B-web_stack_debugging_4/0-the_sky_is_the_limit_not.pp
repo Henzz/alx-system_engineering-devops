@@ -10,7 +10,6 @@ exec { 'add_ulimit_to_nginx':
 # Restart nginx service
 exec { 'nginx_restart':
   command     => 'sudo service nginx restart',
-  refreshonly => true,
-  path        => '/usr/bin:/usr/sbin:/bin:/sbin',
+  path        => ['/bin', '/usr/bin'],
 }
 
