@@ -1,34 +1,48 @@
 #!/usr/bin/env bash
-# configures a new Ubuntu machine
+# Configure Nginx to a custom HTTP response header
 
-# Install nginx on web-01 server
-apt-get -y update
+# Update the system
+apt-get update
+
+# Install Nginx
 apt-get -y install nginx
 
-# Add custom response header to know the server name for debugging
-HOST_NAME=$(hostname)
-HEADER="\\\n\tadd_header X-Served-By $HOST_NAME;\n"
+# Set custom header
+HOSTNAME=$(hostname)
+HEADER="\tadd_header X-Served-By $HOSTNAME;\n"
 FIND=$(grep "X-Server-by" /etc/nginx/sites-available/default)
 if [[ -z $FIND ]]; then
-    sed -i "23i $HEADER" /etc/nginx/sites-available/default
+	# Configure the custom HTTP response header
+	sed -i "23i $HEADER" /etc/nginx/sites-available/default
 fi
 
-# Create a firts index.html page
-echo "Hello World!" > /var/www/html/index.html
+# Creates a file index.html page
+echo 'Hello World!' > /var/www/html/index.html
 
-# Add to the nginx configuration file a redirection to another page
+# Add redirection page
 FIND=$(grep "redirect_me" /etc/nginx/sites-available/default)
-STRING="\\\n\tlocation /redirect_me {\n\t\t return 301 https://www.youtube.com/watch?v=3MbaGJN2ioQ;\n\t}\n"
+STR="\\\n\tlocation /redirect_me {\n\t\t return 301 https://www.youtube.com;\n\t}\n"
 if [[ -z $FIND ]]; then
-    sed -i "42i $STRING" /etc/nginx/sites-available/default
+	sed -i "42i $STR" /etc/nginx/sites-available/default
 fi
 
-# Add to the nginx configuration file a error page 404
+# Add 404 page
 FIND=$(grep "error_page 404" /etc/nginx/sites-available/default)
 ERROR="\\\n\terror_page 404 /custom_404.html;\n"
 if [[ -z $FIND ]]; then
-    echo "Ceci n'est pas une page" > /var/www/html/custom_404.html
-    sed -i "40i $ERROR" /etc/nginx/sites-available/default
+	echo "Page not found!" > /var/www/html/custom_404.html
+	sed -i "40i $ERROR" /etc/nginx/sites-available/default
 fi
 
-service nginx restart
+# Restart Nginx
+sudo systemctl restart nginx
+
+# Test the configuration by querying Nginx
+response=$(curl -s http://localhost)
+
+# Check if the response contains "Hello World!"
+if [[ $response == *"Hello World!"* ]]; then
+	echo "Nginx is configured correctly."
+else
+	echo "Nginx configuration failed. Please check the installation and configuration."
+fi
