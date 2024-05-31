@@ -35,4 +35,14 @@ if [[ -z $FIND ]]; then
 fi
 
 # Restart Nginx
-sudo systemctl restart nginx
+sudo service nginx restart
+
+# Test the configuration by querying Nginx
+response=$(curl -s http://localhost)
+
+# Check if the response contains "Hello World!"
+if [[ $response == *"Hello World!"* ]]; then
+	echo "Nginx is configured correctly."
+else
+	echo "Nginx configuration failed. Please check the installation and configuration."
+fi
