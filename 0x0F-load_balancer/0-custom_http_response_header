@@ -2,10 +2,10 @@
 # Configure Nginx to a custom HTTP response header
 
 # Update the system
-apt-get -y update
+sudo apt -y update
 
 # Install Nginx
-apt-get -y install nginx
+sudo apt -y install nginx
 
 # Set custom header
 HOSTNAME=$(hostname)
@@ -36,13 +36,3 @@ fi
 
 # Restart Nginx
 sudo systemctl restart nginx
-
-# Test the configuration by querying Nginx
-response=$(curl -s http://localhost)
-
-# Check if the response contains "Hello World!"
-if [[ $response == *"Hello World!"* ]]; then
-	echo "Nginx is configured correctly."
-else
-	echo "Nginx configuration failed. Please check the installation and configuration."
-fi
