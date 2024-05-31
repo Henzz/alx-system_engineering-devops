@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+# Configure Nginx to a custom HTTP response header
+
+# Update the system
+sudo apt update
+sudo apt upgrade -y
+
+# Install Nginx
+sudo apt install -y nginx
+
+# Allow ufw
+sudo ufw allow 'Nginx HTTP'
+
+sudo chmod -R 755 /var/www
+
+echo 'Hello World!' > /var/www/html/index.html
+echo 'Page not foundd!' > /var/www/html/404.html
+
+# Configure the custom HTTP response header
+sudo tee /etc/nginx/sites-available/default > /dev/null << EOL
+server {
+    listen 80 default_server;
+    listen [::]:80 default_server;
+
+    server_name _;
+
+    root /var/www/html;
+    index index.html index.htm index.nginx-debian.html;
+
+    add_header X-Served-By \$hostname;
+
+    location / {
+      try_files \$uri \$uri/ =404;
+    }
+
+    error_page 404 /404.html;
+    location = 404 /404.html {
+      internal;
+    }
+
+    location ~ /\.ht {
+      deny all;
+    }
+}
+EOL
+
+# Restart Nginx
+sudo systemctl restart nginx
+
+# Test the configuration by querying Nginx
+response=$(curl -s http://localhost)
+
+# Check if the response contains "Hello World!"
+if [[ $response == *"Hello World!"* ]]; then
+    echo "Nginx is configured correctly."
+else
+    echo "Nginx configuration failed. Please check the installation and configuration."
+fi
