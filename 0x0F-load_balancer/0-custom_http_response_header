@@ -19,7 +19,7 @@ server {
     root /var/www/html;
     index index.html index.htm index.nginx-debian.html;
 
-    add_header X-Served-By 58438-web-02;
+    add_header X-Served-By \$hostname;
 
     location / {
       try_files \$uri \$uri/ =404;
@@ -33,3 +33,13 @@ EOL
 
 # Restart Nginx
 sudo systemctl restart nginx
+
+# Test the configuration by querying Nginx
+response=$(curl -s http://localhost)
+
+# Check if the response contains "Hello World!"
+if [[ $response == *"Hello World!"* ]]; then
+    echo "Nginx is configured correctly."
+else
+    echo "Nginx configuration failed. Please check the installation and configuration."
+fi
