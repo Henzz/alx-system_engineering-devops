@@ -2,14 +2,14 @@
 # Configure Nginx to a custom HTTP response header
 
 # Update the system
-apt-get update
+apt-get -y update
 
 # Install Nginx
 apt-get -y install nginx
 
 # Set custom header
 HOSTNAME=$(hostname)
-HEADER="\tadd_header X-Served-By $HOSTNAME;\n"
+HEADER="\n\tadd_header X-Served-By $HOSTNAME;\n"
 FIND=$(grep "X-Server-by" /etc/nginx/sites-available/default)
 if [[ -z $FIND ]]; then
 	# Configure the custom HTTP response header
@@ -17,7 +17,7 @@ if [[ -z $FIND ]]; then
 fi
 
 # Creates a file index.html page
-echo 'Hello World!' > /var/www/html/index.html
+echo "Hello World!" > /var/www/html/index.html
 
 # Add redirection page
 FIND=$(grep "redirect_me" /etc/nginx/sites-available/default)
