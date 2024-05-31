@@ -8,8 +8,6 @@ sudo apt upgrade -y
 # Install Nginx
 sudo apt install -y nginx
 
-hostname=$(58438-web-02)
-
 # Configure the custom HTTP response header
 sudo tee /etc/nginx/sites-available/default > /dev/null << EOL
 server {
@@ -18,10 +16,17 @@ server {
 
     server_name _;
 
+    root /var/www/html;
+    index index.html index.htm index.nginx-debian.html;
+
+    add_header X-Served-By 58438-web-02;
+
     location / {
-        add_header X-Served-By $hostname;
-        root /var/www/html;
-        index index.html;
+      try_files \$uri \$uri/ =404;
+    }
+
+    location ~ /\.ht {
+      deny all;
     }
 }
 EOL
