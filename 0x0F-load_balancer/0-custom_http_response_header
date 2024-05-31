@@ -9,11 +9,11 @@ sudo apt -y install nginx
 
 # Set custom header
 HOSTNAME=$(hostname)
-HEADER="\n\tadd_header X-Served-By $HOSTNAME;\n"
+HEADER="\\\n\tadd_header X-Served-By $HOSTNAME;\n"
 FIND=$(grep "X-Server-by" /etc/nginx/sites-available/default)
 if [[ -z $FIND ]]; then
-	# Configure the custom HTTP response header
-	sed -i "23i $HEADER" /etc/nginx/sites-available/default
+  # Configure the custom HTTP response header
+  sed -i "23i $HEADER" /etc/nginx/sites-available/default
 fi
 
 # Creates a file index.html page
@@ -23,15 +23,15 @@ echo "Hello World!" > /var/www/html/index.html
 FIND=$(grep "redirect_me" /etc/nginx/sites-available/default)
 STR="\\\n\tlocation /redirect_me {\n\t\t return 301 https://www.youtube.com;\n\t}\n"
 if [[ -z $FIND ]]; then
-	sed -i "42i $STR" /etc/nginx/sites-available/default
+  sed -i "42i $STR" /etc/nginx/sites-available/default
 fi
 
 # Add 404 page
 FIND=$(grep "error_page 404" /etc/nginx/sites-available/default)
 ERROR="\\\n\terror_page 404 /custom_404.html;\n"
 if [[ -z $FIND ]]; then
-	echo "Page not found!" > /var/www/html/custom_404.html
-	sed -i "40i $ERROR" /etc/nginx/sites-available/default
+  echo "Page not found" > /var/www/html/custom_404.html
+  sed -i "40i $ERROR" /etc/nginx/sites-available/default
 fi
 
 # Restart Nginx
